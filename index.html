@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Luyện tập sắp xếp từ - Trung Việt thông minh</title>
+    <title>Luyện tập sắp xếp từ - Đánh dấu câu khó & Reset</title>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -217,6 +217,25 @@
         }
         body.dark .meaning-permanent { background: #134e4a; border-left-color: #2dd4bf; color: #e2e8f0; }
         
+        /* Question button with star */
+        .q-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+        }
+        .q-star {
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            color: #fbbf24;
+            text-shadow: 0 0 2px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .q-star:hover { transform: scale(1.1); }
+        .q-star.empty { color: #cbd5e1; }
+        body.dark .q-star.empty { color: #475569; }
+        
         /* Modern UI */
         :root {
             --brand: #2563eb;
@@ -392,7 +411,7 @@
                         <div class="attempt-indicator"><span>Lần thử:</span><span id="attemptDotsContainer"></span></div>
                     </div>
                     <div class="question-progress-wrap"><div class="progress-track"><div id="questionProgressFill" class="progress-fill"></div></div></div>
-                    <div id="questionButtons" class="flex-row"></div>
+                    <div id="questionButtons" class="flex-row" style="gap: 8px;"></div>
                 </div>
                 
                 <div id="vietnameseHint" class="meaning-permanent">
@@ -423,7 +442,7 @@
                     <button id="shuffleBtn" class="btn btn-outline">🎲 Xáo trộn</button>
                     <button id="nextQuestionBtn" class="btn btn-next">▶️ Câu tiếp theo</button>
                 </div>
-                <div class="brand-footer">🌟 alichinese - Sắp xếp từ thông minh 🌟</div>
+                <div class="brand-footer">🌟 alichinese - Đánh dấu ⭐ câu khó & Tự động reset khi làm sai câu đã đúng 🌟</div>
             </div>
         </div>
     </div>
@@ -467,6 +486,41 @@
     function loadFromLocalCache() { const raw = localStorage.getItem('word_order_local'); if(raw) try { const d=JSON.parse(raw); classes=d.classes||[]; exercises=d.exercises||[]; progress=d.progress||{}; } catch(e){} }
     function normalize() { exercises.forEach(ex => { if(!ex.questions) ex.questions=[]; ex.questions.forEach(q => { if(!q.words || q.words.length===0) q.words = q.text.split(/\s+/); if(!q.grammar) q.grammar=''; if(!q.explanation) q.explanation=''; if(!q.meaning) q.meaning=''; }); }); classes.forEach(c => { if(!c.students) c.students=[]; if(!c.exerciseIds) c.exerciseIds=[]; }); }
     async function logQuestionAttempt(className, studentName, exerciseId, questionId, startTime, endTime, correct) { try { await db.collection('detailed_logs').add({ className, studentName, exerciseId, questionId, startTime: firebase.firestore.Timestamp.fromDate(startTime), endTime: firebase.firestore.Timestamp.fromDate(endTime), correct, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e){} }
+    
+    // Lấy hoặc khởi tạo starred trong progress
+    function getStarredMap() {
+        if(!currentStudent) return {};
+        const cn=currentStudent.className, sn=currentStudent.studentName;
+        if(!progress[cn]) progress[cn]={};
+        if(!progress[cn][sn]) progress[cn][sn]={};
+        if(!progress[cn][sn].starred) progress[cn][sn].starred={};
+        return progress[cn][sn].starred;
+    }
+    function setStarred(questionId, isStarred) {
+        const starred = getStarredMap();
+        if(isStarred) starred[questionId]=true;
+        else delete starred[questionId];
+        saveToCloud();
+    }
+    function isStarred(questionId) {
+        const starred = getStarredMap();
+        return !!starred[questionId];
+    }
+    
+    // Reset câu đã đúng nếu làm sai
+    function resetQuestionIfWasCorrect(qid) {
+        if(!currentStudent) return false;
+        const cn=currentStudent.className, sn=currentStudent.studentName;
+        const qData = progress[cn]?.[sn]?.[currentExerciseId]?.[qid];
+        if(qData && qData.correct === true) {
+            // Xóa trạng thái đúng, đặt lại completed=0
+            progress[cn][sn][currentExerciseId][qid] = { completed:0, correct:false, startTime:new Date() };
+            saveToCloud();
+            showToast("⚠️ Câu này đã được reset vì bạn làm sai (trước đó đã đúng).", "correct");
+            return true;
+        }
+        return false;
+    }
     
     // ========== XÁC THỰC ==========
     auth.onAuthStateChanged(async (user) => {
@@ -556,7 +610,7 @@
     function addWordToBank(word) { const index=answerWords.indexOf(word); if(index!==-1){ answerWords.splice(index,1); remainingWords.push(word); renderGame(); } }
     function initSortable() { if(sortableBank) sortableBank.destroy(); if(sortableBuilder) sortableBuilder.destroy(); const bank=document.getElementById('wordBank'); const builder=document.getElementById('sentenceBuilder'); sortableBank=new Sortable(bank,{ group:{ name:'words', pull:'clone', revertClone:false }, sort:false, onEnd:(evt)=>{ if(evt.to===builder){ const text=evt.item.innerText.replace('🔊','').trim(); evt.item.remove(); const index=remainingWords.indexOf(text); if(index!==-1){ remainingWords.splice(index,1); answerWords.push(text); renderGame(); } } else if(evt.to===bank){ const text=evt.item.innerText.replace('🔊','').trim(); evt.item.remove(); const index=answerWords.indexOf(text); if(index!==-1){ answerWords.splice(index,1); remainingWords.push(text); renderGame(); } } } }); sortableBuilder=new Sortable(builder,{ group:{ name:'words', pull:true, revertClone:false }, sort:true }); }
     function shuffleArray(arr) { return [...arr].sort(()=>Math.random()-0.5); }
-    function resetGame() { if(!currentQuestionObj) return; remainingWords=shuffleArray([...currentQuestionObj.words]); answerWords=[]; renderGame(); showToast("Đã làm lại", "correct"); loadQuestion(currentQuestionIndex); }
+    function resetGame() { if(!currentQuestionObj) return; remainingWords=shuffleArray([...currentQuestionObj.words]); answerWords=[]; renderGame(); showToast("Đã làm lại câu này", "correct"); loadQuestion(currentQuestionIndex); }
     function reshuffle() { if(!currentQuestionObj) return; remainingWords=shuffleArray(remainingWords); renderGame(); showToast("Đã xáo trộn", "correct"); }
     
     function checkAnswer() {
@@ -580,7 +634,15 @@
         if(!rec.startTime) rec.startTime=now;
         const ex=exercises.find(e=>e.id===currentExerciseId);
 
-        // Nếu câu đã đúng trước đó
+        // KIỂM TRA RESET: nếu câu này đã đúng trước đó và bây giờ làm sai → reset
+        if(rec.correct === true && !isAnsCorrect) {
+            resetQuestionIfWasCorrect(qid);
+            // Sau khi reset, tải lại câu hỏi để cập nhật trạng thái mới
+            loadQuestion(currentQuestionIndex);
+            return;
+        }
+
+        // Nếu câu đã đúng (và không bị reset) thì hiển thị thông báo
         if(rec.correct){
             showToast("🎉 Câu này bạn đã làm đúng rồi!", "correct");
             displayAnswerBox(currentQuestionObj, true);
@@ -601,7 +663,7 @@
             return;
         }
 
-        // Xử lý sai
+        // Xử lý sai (chưa đúng)
         if(rec.completed < 3){
             rec.completed++;
             saveToCloud();
@@ -628,18 +690,17 @@
             updateAttemptDots(rec.completed);
             renderQButtons(ex);
             updateStudentNav(ex);
-            // Nếu chưa đủ 3 lần, đảm bảo đáp án ẩn
             if(rec.completed < 3){
                 document.getElementById('answerRevealBox').classList.remove('visible');
             }
         } else {
-            // Trường hợp đã sai 3 lần từ trước (không thể xảy ra vì đã hiện đáp án, nhưng giữ lại)
             showToast(`❌ Bạn đã sai 3 lần, đáp án bên dưới.`, "wrong");
             displayAnswerBox(currentQuestionObj, true);
         }
     }
 
     function getSmartHint(correct,current){ for(let i=0;i<correct.length;i++){ if(i>=current.length) return `Thiếu từ "${correct[i]}" ở vị trí ${i+1}`; if(current[i]!==correct[i]) return `Từ "${current[i]}" nên thay bằng "${correct[i]}" hoặc đặt sau "${correct[i-1]||'đầu câu'}"`; } if(current.length>correct.length) return `Thừa từ "${current[correct.length]}"`; return null; }
+    
     function renderQButtons(ex){
         const container=document.getElementById('questionButtons');
         if(!container || !currentStudent) return;
@@ -648,12 +709,50 @@
             const prog=progress[currentStudent.className]?.[currentStudent.studentName]?.[ex.id]?.[q.id];
             const done=prog?.correct;
             const revealed=prog?.completed>=3 && !done;
-            const btn=document.createElement('button');
-            btn.textContent=`${idx+1}${done?' ✓':revealed?' 👀':''}`;
-            btn.title=`Câu ${idx+1}`;
-            btn.className=`btn ${idx===currentQuestionIndex?'btn-primary':'btn-outline'}`;
-            btn.onclick=()=>{ loadQuestion(idx); };
-            container.appendChild(btn);
+            const starred = isStarred(q.id);
+            
+            // Tạo wrapper cho button và star
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'inline-flex';
+            wrapper.style.alignItems = 'center';
+            wrapper.style.gap = '6px';
+            wrapper.style.background = idx===currentQuestionIndex ? 'linear-gradient(135deg, #2563eb, #7c3aed)' : 'rgba(248,250,252,.86)';
+            wrapper.style.borderRadius = '48px';
+            wrapper.style.padding = '4px 12px 4px 16px';
+            wrapper.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
+            if(idx!==currentQuestionIndex) wrapper.style.background = 'rgba(248,250,252,.86)';
+            if(currentDarkMode && idx!==currentQuestionIndex) wrapper.style.background = 'rgba(30,41,59,.86)';
+            
+            const btn = document.createElement('button');
+            btn.textContent = `${idx+1}${done?' ✓':revealed?' 👀':''}`;
+            btn.title = `Câu ${idx+1}`;
+            btn.style.background = 'transparent';
+            btn.style.border = 'none';
+            btn.style.fontWeight = '600';
+            btn.style.cursor = 'pointer';
+            btn.style.fontSize = '0.9rem';
+            btn.style.color = idx===currentQuestionIndex ? 'white' : (currentDarkMode ? '#e2e8f0' : '#0f172a');
+            btn.onclick = (e) => { e.stopPropagation(); loadQuestion(idx); };
+            
+            const starSpan = document.createElement('span');
+            starSpan.textContent = starred ? '★' : '☆';
+            starSpan.style.cursor = 'pointer';
+            starSpan.style.fontSize = '1.2rem';
+            starSpan.style.color = '#fbbf24';
+            starSpan.style.textShadow = '0 0 2px rgba(0,0,0,0.2)';
+            if(!starred) starSpan.style.color = '#cbd5e1';
+            if(currentDarkMode && !starred) starSpan.style.color = '#475569';
+            starSpan.onclick = async (e) => {
+                e.stopPropagation();
+                const newState = !starred;
+                setStarred(q.id, newState);
+                renderQButtons(ex); // refresh
+                showToast(newState ? '⭐ Đã đánh dấu câu khó' : '☆ Bỏ đánh dấu', 'correct');
+            };
+            
+            wrapper.appendChild(btn);
+            wrapper.appendChild(starSpan);
+            container.appendChild(wrapper);
         });
     }
 
@@ -669,7 +768,7 @@
         else showToast('Bạn đang ở câu đầu tiên', 'correct');
     }
 
-    // GIÁO VIÊN
+    // GIÁO VIÊN (các hàm giữ nguyên, viết tắt để ngắn gọn)
     function renderTeacher() { renderClassList(); renderExerciseList(); renderClassDetail(); renderProgressTable(); loadAllowedEmails(); attachTabEvents(); }
     function attachTabEvents() { document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.onclick=()=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active')); document.getElementById('tab-'+btn.dataset.tab).classList.add('active'); if(btn.dataset.tab==='monitor') renderLoginLogs(); if(btn.dataset.tab==='progress') renderProgressTable(); }; }); }
     function renderClassList() { const container=document.getElementById('classList'); container.innerHTML=''; classes.forEach(cls=>{ const div=document.createElement('div'); div.className='item-card'; div.innerHTML=`<span>🏫 <strong>${escapeHtml(cls.name)}</strong> (${cls.students.length} học sinh)</span><button class="btn select-class" data-id="${cls.id}">📂 Chọn</button>`; container.appendChild(div); }); document.querySelectorAll('.select-class').forEach(btn=>btn.onclick=()=>{ currentSelectedClassId=Number(btn.dataset.id); renderTeacher(); }); }
