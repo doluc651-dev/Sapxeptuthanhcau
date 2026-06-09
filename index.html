@@ -27,7 +27,7 @@
             border-radius: 28px;
             padding: 20px 16px;
             width: 100%;
-            max-width: 100%;
+            max-width: 1180px;
             margin: 0 auto;
             box-shadow: 0 25px 50px rgba(0,0,0,0.1);
         }
@@ -178,10 +178,11 @@
         .answer-reveal-box:not(.visible) { display: none; }
         
         .toast {
-            position: fixed; bottom: 20px; left: 5%; width: 90%;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: white; border-radius: 60px; padding: 12px 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center;
             gap: 12px; z-index: 1000; border-left: 8px solid;
+            width: max-content; max-width: 90%;
         }
         .toast.correct { border-color: #16a34a; background: #f0fdf4; }
         .toast.wrong { border-color: #dc2626; background: #fef2f2; }
@@ -216,19 +217,7 @@
         }
         body.dark .meaning-permanent { background: #134e4a; border-left-color: #2dd4bf; color: #e2e8f0; }
         
-        @media (max-width: 480px) {
-            body { padding: 8px; }
-            .container, .app-container { padding: 12px; }
-            .btn { padding: 10px 14px; font-size: 0.9rem; min-height: 44px; }
-            .word-token { padding: 6px 12px; font-size: 0.9rem; }
-            .speak-icon { width: 28px; height: 28px; font-size: 0.8rem; }
-            .tab-btn { padding: 8px 14px; font-size: 0.85rem; }
-            .item-card { flex-direction: column; align-items: stretch; }
-            .flex-row { gap: 8px; }
-        }
-
-
-        /* ===== Modern app UI upgrade - mobile first ===== */
+        /* Modern UI */
         :root {
             --brand: #2563eb;
             --brand-2: #7c3aed;
@@ -241,77 +230,46 @@
             --border-soft: rgba(148,163,184,.25);
         }
         body.light {
-            background:
-                radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 34%),
-                radial-gradient(circle at bottom right, rgba(124,58,237,.18), transparent 34%),
-                linear-gradient(135deg, #eef6ff 0%, #f8fbff 48%, #f3efff 100%);
+            background: radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 34%),
+                        radial-gradient(circle at bottom right, rgba(124,58,237,.18), transparent 34%),
+                        linear-gradient(135deg, #eef6ff 0%, #f8fbff 48%, #f3efff 100%);
         }
         body.dark {
-            background:
-                radial-gradient(circle at top left, rgba(56,189,248,.18), transparent 34%),
-                radial-gradient(circle at bottom right, rgba(124,58,237,.18), transparent 34%),
-                linear-gradient(135deg, #020617 0%, #0f172a 56%, #111827 100%);
+            background: radial-gradient(circle at top left, rgba(56,189,248,.18), transparent 34%),
+                        radial-gradient(circle at bottom right, rgba(124,58,237,.18), transparent 34%),
+                        linear-gradient(135deg, #020617 0%, #0f172a 56%, #111827 100%);
         }
         .container, .app-container {
-            max-width: 1180px;
-            border: 1px solid rgba(255,255,255,.55);
-            background: rgba(255,255,255,.84);
             backdrop-filter: blur(18px);
+            background: rgba(255,255,255,.84);
+            border: 1px solid rgba(255,255,255,.55);
             box-shadow: 0 30px 80px rgba(15,23,42,.14);
         }
         body.dark .container, body.dark .app-container {
             background: rgba(15,23,42,.86);
             border-color: rgba(148,163,184,.14);
-            box-shadow: 0 30px 80px rgba(0,0,0,.35);
         }
         .top-bar {
+            backdrop-filter: blur(16px);
+            background: rgba(255,255,255,.8);
+            border: 1px solid var(--border-soft);
             position: sticky;
             top: 10px;
             z-index: 50;
-            background: rgba(255,255,255,.8);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-soft);
         }
         body.dark .top-bar { background: rgba(30,41,59,.84); }
         .student-section {
             background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(248,250,252,.88));
             border: 1px solid var(--border-soft);
-            box-shadow: 0 24px 60px rgba(15,23,42,.10);
         }
         body.dark .student-section {
             background: linear-gradient(180deg, rgba(30,41,59,.95), rgba(15,23,42,.88));
         }
-        .student-hero {
-            display: grid;
-            grid-template-columns: 1.2fr .8fr;
-            gap: 18px;
-            align-items: center;
-            padding: 22px;
-            border-radius: 30px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            color: #fff;
-            margin-bottom: 18px;
-            overflow: hidden;
-            position: relative;
-        }
-        .student-hero::after {
-            content: '';
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            right: -60px;
-            top: -70px;
-            border-radius: 999px;
-            background: rgba(255,255,255,.16);
-        }
-        .student-hero h2 { font-size: clamp(1.25rem, 4vw, 2.15rem); margin-bottom: 6px; }
-        .student-hero p { opacity: .9; line-height: 1.45; }
         .study-card {
             background: rgba(255,255,255,.78);
             border: 1px solid var(--border-soft);
             border-radius: 28px;
             padding: 18px;
-            box-shadow: 0 18px 38px rgba(15,23,42,.08);
             margin: 14px 0;
         }
         body.dark .study-card { background: rgba(15,23,42,.62); }
@@ -322,28 +280,9 @@
             align-items: end;
             margin-bottom: 12px;
         }
-        .exercise-toolbar label { color: var(--text-soft); font-weight: 700; }
-        body.dark .exercise-toolbar label { color: #cbd5e1; }
-        .question-progress-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin: 12px 0 14px;
-        }
-        .question-counter-pill {
-            min-width: max-content;
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-            padding: 9px 13px;
-            border-radius: 999px;
-            font-weight: 800;
-        }
-        body.dark .question-counter-pill { background: #172554; color: #bfdbfe; border-color: #1d4ed8; }
+        .question-progress-wrap { margin: 12px 0 14px; }
         .progress-track {
             height: 12px;
-            flex: 1;
             border-radius: 999px;
             background: #e2e8f0;
             overflow: hidden;
@@ -356,41 +295,11 @@
             background: linear-gradient(90deg, #2563eb, #06b6d4, #22c55e);
             transition: width .35s ease;
         }
-        #questionButtons {
-            max-height: 74px;
-            overflow: auto;
-            padding: 4px;
-            justify-content: flex-start !important;
-        }
-        #questionButtons .btn {
-            min-height: 40px;
-            padding: 8px 13px;
-            font-size: .9rem;
-        }
-        .word-bank, .sentence-builder {
-            border-radius: 28px;
-            min-height: 128px;
-            align-content: flex-start;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
-        }
-        .word-bank { background: #f8fbff; border-color: #c7d2fe; }
-        .sentence-builder {
-            background: linear-gradient(180deg, #ecfeff, #f0fdf4);
-            border: 2px solid rgba(37,99,235,.34);
-        }
-        body.dark .word-bank, body.dark .sentence-builder { background: rgba(2,6,23,.45); }
-        .word-token {
-            min-height: 44px;
-            border: 1px solid rgba(148,163,184,.35);
-            background: rgba(255,255,255,.92);
-            box-shadow: 0 8px 20px rgba(15,23,42,.08);
-            font-weight: 700;
-        }
-        body.dark .word-token { background: #1e293b; color: #e2e8f0; }
-        .word-token.used {
-            background: linear-gradient(135deg, #2563eb, #0891b2);
-            border-color: transparent;
-            color: white;
+        .student-practice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: stretch;
         }
         .action-bar {
             position: sticky;
@@ -406,7 +315,6 @@
             background: rgba(255,255,255,.80);
             border: 1px solid var(--border-soft);
             backdrop-filter: blur(16px);
-            box-shadow: 0 18px 38px rgba(15,23,42,.14);
         }
         body.dark .action-bar { background: rgba(15,23,42,.82); }
         .btn-primary {
@@ -416,7 +324,6 @@
         .btn-next {
             background: linear-gradient(135deg, #10b981, #06b6d4) !important;
             color: white;
-            box-shadow: 0 12px 22px rgba(16,185,129,.22);
         }
         .btn-ghost {
             background: rgba(248,250,252,.86);
@@ -424,42 +331,12 @@
             border: 1px solid var(--border-soft);
         }
         body.dark .btn-ghost { background: rgba(30,41,59,.86); color: #e2e8f0; }
-        .meaning-permanent {
-            background: linear-gradient(135deg, #eff6ff, #ecfeff);
-            border-left: 0;
-            border: 1px solid #bfdbfe;
-            box-shadow: 0 10px 24px rgba(37,99,235,.08);
-        }
-        body.dark .meaning-permanent { background: rgba(8,47,73,.65); border-color: #155e75; }
-        .answer-reveal-box {
-            background: linear-gradient(135deg, #dcfce7, #ecfeff);
-            border: 1px solid #86efac;
-            box-shadow: 0 14px 34px rgba(34,197,94,.10);
-        }
-        .toast { border-left: 0; border-radius: 24px; width: min(520px, 92%); left: 50%; transform: translateX(-50%); }
-        @media (min-width: 900px) {
-            .student-practice-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-                align-items: stretch;
-            }
-            .word-bank, .sentence-builder { margin: 0; }
-        }
         @media (max-width: 700px) {
-            body { align-items: flex-start; padding: 8px; }
-            .container, .app-container { border-radius: 22px; padding: 10px; }
-            .top-bar { top: 6px; border-radius: 18px; padding: 10px; }
-            .student-section { padding: 12px; border-radius: 22px; }
-            .student-hero { grid-template-columns: 1fr; padding: 18px; border-radius: 24px; }
+            .student-practice-grid { grid-template-columns: 1fr; gap: 10px; }
             .exercise-toolbar { grid-template-columns: 1fr; }
-            .question-progress-wrap { align-items: stretch; flex-direction: column; gap: 8px; }
-            #questionButtons { flex-wrap: nowrap; overflow-x: auto; max-height: none; justify-content: flex-start !important; }
-            .action-bar { bottom: 6px; border-radius: 22px; padding: 9px; }
-            .action-bar .btn { flex: 1 1 42%; min-height: 46px; padding: 10px 12px; }
+            .action-bar .btn { flex: 1 1 42%; min-height: 46px; }
             #checkBtn, #nextQuestionBtn { flex-basis: 100%; }
         }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -511,15 +388,10 @@
             <div id="studentContent" style="display:none;">
                 <div class="study-card">
                     <div class="exercise-toolbar">
-                        <div>
-                            <label>📘 Bài tập</label>
-                            <select id="exerciseSelect"></select>
-                        </div>
+                        <div><label>📘 Bài tập</label><select id="exerciseSelect"></select></div>
                         <div class="attempt-indicator"><span>Lần thử:</span><span id="attemptDotsContainer"></span></div>
                     </div>
-                    <div class="question-progress-wrap">
-                        <div class="progress-track"><div id="questionProgressFill" class="progress-fill"></div></div>
-                    </div>
+                    <div class="question-progress-wrap"><div class="progress-track"><div id="questionProgressFill" class="progress-fill"></div></div></div>
                     <div id="questionButtons" class="flex-row"></div>
                 </div>
                 
@@ -528,8 +400,8 @@
                 </div>
                 
                 <div class="student-practice-grid">
-                    <div class="word-bank" id="wordBank"><div style="color:#94a3b8;">🎲 Từ vựng (chạm hoặc kéo thả)</div></div>
-                    <div class="sentence-builder" id="sentenceBuilder"><div style="color:#94a3b8;">📌 Ghép câu tại đây</div></div>
+                    <div class="word-bank" id="wordBank"><div style="color:#94a3b8;">🎲 Từ vựng (kéo thả)</div></div>
+                    <div class="sentence-builder" id="sentenceBuilder"><div style="color:#94a3b8;">📌 Ghép từ vào đây</div></div>
                 </div>
                 <div id="grammarBox" class="hidden study-card" style="background:#fff7ed;"><strong>📖 Gợi ý:</strong> <span id="grammarText"></span></div>
                 
@@ -612,7 +484,7 @@
     // HỌC SINH
     function loadStudentExercises() { if(!currentStudent) return; const cls=classes.find(c=>c.name===currentStudent.className); if(!cls){ document.getElementById('studentContent').innerHTML='<p>Lỗi lớp học</p>'; return; } const exSel=document.getElementById('exerciseSelect'); exSel.innerHTML='<option value="">-- Chọn bài --</option>'; cls.exerciseIds.forEach(eid=>{ const ex=exercises.find(e=>e.id===eid); if(ex){ const o=document.createElement('option'); o.value=ex.id; o.textContent=`${ex.title} (${ex.questions.length} câu)`; exSel.appendChild(o); } }); if(cls.exerciseIds.length) { exSel.value=cls.exerciseIds[0]; loadExercise(parseInt(exSel.value)); } else document.getElementById('statusMsg').innerHTML='Chưa có bài tập.'; }
     
-    function loadExercise(exId) { currentExerciseId=exId; currentQuestionIndex=0; const ex=exercises.find(e=>e.id===exId); if(ex&&ex.questions.length) { renderQButtons(ex); loadQuestion(0); } else document.getElementById('statusMsg').innerHTML='Bài tập trống.'; document.getElementById('answerRevealBox').classList.remove('visible'); document.getElementById('nextQuestionBtn').style.display='none'; initSortable(); }
+    function loadExercise(exId) { currentExerciseId=exId; currentQuestionIndex=0; const ex=exercises.find(e=>e.id===exId); if(ex&&ex.questions.length) { renderQButtons(ex); loadQuestion(0); } else document.getElementById('statusMsg').innerHTML='Bài tập trống.'; document.getElementById('answerRevealBox').classList.remove('visible'); initSortable(); }
     
     function loadQuestion(idx) {
         const ex=exercises.find(e=>e.id===currentExerciseId);
@@ -631,7 +503,11 @@
         const prog=progress[currentStudent.className]?.[currentStudent.studentName]?.[currentExerciseId]?.[q.id];
         const isCorrect=prog?.correct||false;
         const completed=prog?.completed||0;
-        if(isCorrect||completed>=3) displayAnswerBox(q,true); else document.getElementById('answerRevealBox').classList.remove('visible');
+        if(isCorrect || completed >= 3) {
+            displayAnswerBox(q, true);
+        } else {
+            document.getElementById('answerRevealBox').classList.remove('visible');
+        }
         updateAttemptDots(completed);
         updateStudentNav(ex);
         initSortable();
@@ -652,12 +528,10 @@
     function updateStudentNav(ex) {
         if(!ex) ex=exercises.find(e=>e.id===currentExerciseId);
         const total=ex?.questions?.length || 0;
-        const counter=document.getElementById('questionCounter');
         const fill=document.getElementById('questionProgressFill');
-        const nextBtn=document.getElementById('nextQuestionBtn');
-        const prevBtn=document.getElementById('prevQuestionBtn');
-        if(counter) counter.innerText = total ? `Câu ${currentQuestionIndex+1}/${total}` : 'Câu 0/0';
         if(fill) fill.style.width = total ? `${((currentQuestionIndex+1)/total)*100}%` : '0%';
+        const prevBtn=document.getElementById('prevQuestionBtn');
+        const nextBtn=document.getElementById('nextQuestionBtn');
         if(prevBtn) prevBtn.disabled = currentQuestionIndex<=0;
         if(nextBtn) {
             nextBtn.disabled = !total || currentQuestionIndex>=total-1;
@@ -667,7 +541,15 @@
     }
 
     function updateVietnamMeaning(q) { const span=document.getElementById('vietnameseMeaningText'); if(q&&q.meaning) span.innerText=q.meaning; else span.innerText='(Chưa có dịch nghĩa)'; }
-    function displayAnswerBox(q,forceShow) { const box=document.getElementById('answerRevealBox'); if(forceShow){ document.getElementById('correctAnswerText').innerText=q.text; document.getElementById('meaningText').innerText=q.meaning||''; document.getElementById('explanationText').innerText=q.explanation||''; box.classList.add('visible'); } else box.classList.remove('visible'); }
+    function displayAnswerBox(q,forceShow) { 
+        const box=document.getElementById('answerRevealBox'); 
+        if(forceShow){ 
+            document.getElementById('correctAnswerText').innerText=q.text; 
+            document.getElementById('meaningText').innerText=q.meaning||''; 
+            document.getElementById('explanationText').innerText=q.explanation||''; 
+            box.classList.add('visible'); 
+        } else box.classList.remove('visible'); 
+    }
     
     function renderGame() { const pool=document.getElementById('wordBank'); const builder=document.getElementById('sentenceBuilder'); pool.innerHTML=''; remainingWords.forEach(w=>{ const token=document.createElement('div'); token.className='word-token'; token.innerHTML=`${escapeHtml(w)} <span class="speak-icon">🔊</span>`; token.querySelector('.speak-icon').onclick=(e)=>{ e.stopPropagation(); speakText(w); }; token.onclick=(e)=>{ if(e.target.classList.contains('speak-icon')) return; addWordToBuilder(w); }; pool.appendChild(token); }); if(remainingWords.length===0) pool.innerHTML='<div style="color:#94a3b8;">✅ Hết từ</div>'; builder.innerHTML=''; answerWords.forEach(w=>{ const token=document.createElement('div'); token.className='word-token used'; token.innerHTML=`${escapeHtml(w)} <span class="speak-icon">🔊</span>`; token.querySelector('.speak-icon').onclick=(e)=>{ e.stopPropagation(); speakText(w); }; token.onclick=(e)=>{ if(e.target.classList.contains('speak-icon')) return; addWordToBank(w); }; builder.appendChild(token); }); if(answerWords.length===0) builder.innerHTML='<div style="color:#94a3b8;">📌 Ghép từ vào đây</div>'; initSortable(); }
     function addWordToBuilder(word) { const index=remainingWords.indexOf(word); if(index!==-1){ remainingWords.splice(index,1); answerWords.push(word); renderGame(); } }
@@ -698,52 +580,62 @@
         if(!rec.startTime) rec.startTime=now;
         const ex=exercises.find(e=>e.id===currentExerciseId);
 
+        // Nếu câu đã đúng trước đó
+        if(rec.correct){
+            showToast("🎉 Câu này bạn đã làm đúng rồi!", "correct");
+            displayAnswerBox(currentQuestionObj, true);
+            return;
+        }
+
         if(isAnsCorrect){
-            if(!rec.correct){
-                rec.correct=true;
-                rec.endTime=now;
-                saveToCloud();
-                showToast("🎉 Chính xác! Bấm ‘Câu tiếp theo’ để làm tiếp.", "correct");
-                logQuestionAttempt(cn,sn,currentExerciseId,qid,new Date(rec.startTime),now,true);
-            } else {
-                showToast("🎉 Bạn đã làm đúng câu này rồi!", "correct");
-            }
+            rec.correct=true;
+            rec.endTime=now;
+            saveToCloud();
+            showToast("🎉 Chính xác! Bấm ‘Câu tiếp theo’ để làm tiếp.", "correct");
+            logQuestionAttempt(cn,sn,currentExerciseId,qid,new Date(rec.startTime),now,true);
             displayAnswerBox(currentQuestionObj,true);
-            updateAttemptDots(rec.completed||0);
+            updateAttemptDots(rec.completed);
             renderQButtons(ex);
             updateStudentNav(ex);
             if(ex && currentQuestionIndex+1>=ex.questions.length) setTimeout(()=>alert("🏆 Hoàn thành bài tập!"),300);
             return;
         }
 
-        if(rec.completed<3 && !rec.correct){
+        // Xử lý sai
+        if(rec.completed < 3){
             rec.completed++;
             saveToCloud();
-            const remaining=3-rec.completed;
-            if(remaining>0) showToast(`❌ Sai, còn ${remaining}/3 lần`, "wrong");
-            else {
+            const remaining = 3 - rec.completed;
+            if(remaining > 0){
+                showToast(`❌ Sai, còn ${remaining}/3 lần thử`, "wrong");
+            } else {
                 showToast(`❌ Sai 3 lần! Đáp án sẽ hiện ra.`, "wrong");
-                displayAnswerBox(currentQuestionObj,true);
+                displayAnswerBox(currentQuestionObj, true);
             }
-            const hint=getSmartHint(correctWords,answerWords);
-            if(hint){
-                let tipDiv=document.getElementById('smartHint');
+            // Gợi ý thông minh
+            const hint = getSmartHint(correctWords, answerWords);
+            if(hint && rec.completed < 3){
+                let tipDiv = document.getElementById('smartHint');
                 if(!tipDiv){
-                    tipDiv=document.createElement('div');
-                    tipDiv.id='smartHint';
-                    tipDiv.className='tooltip';
+                    tipDiv = document.createElement('div');
+                    tipDiv.id = 'smartHint';
+                    tipDiv.className = 'tooltip';
                     document.getElementById('sentenceBuilder').after(tipDiv);
                 }
-                tipDiv.innerText=`💡 ${hint}`;
-                setTimeout(()=>tipDiv.remove(),5000);
+                tipDiv.innerText = `💡 ${hint}`;
+                setTimeout(()=>tipDiv.remove(), 5000);
             }
-            updateAttemptDots(rec.completed||0);
+            updateAttemptDots(rec.completed);
             renderQButtons(ex);
             updateStudentNav(ex);
+            // Nếu chưa đủ 3 lần, đảm bảo đáp án ẩn
+            if(rec.completed < 3){
+                document.getElementById('answerRevealBox').classList.remove('visible');
+            }
         } else {
-            showToast(`❌ Sai rồi! Xem đáp án bên dưới.`, "wrong");
-            displayAnswerBox(currentQuestionObj,true);
-            updateStudentNav(ex);
+            // Trường hợp đã sai 3 lần từ trước (không thể xảy ra vì đã hiện đáp án, nhưng giữ lại)
+            showToast(`❌ Bạn đã sai 3 lần, đáp án bên dưới.`, "wrong");
+            displayAnswerBox(currentQuestionObj, true);
         }
     }
 
@@ -785,7 +677,7 @@
     function renderExerciseList() { const container=document.getElementById('globalExercisesList'); container.innerHTML=''; exercises.forEach(ex=>{ const div=document.createElement('div'); div.className='item-card'; div.innerHTML=`<span><strong>${escapeHtml(ex.title)}</strong> (${ex.questions.length} câu)</span><div class="flex-row"><button class="btn edit-questions" data-id="${ex.id}">📝 Sửa câu</button><button class="btn batch-import" data-id="${ex.id}">📋 Nhập</button><button class="btn edit-ex" data-id="${ex.id}">✏️ Tên</button><button class="btn del-ex" data-id="${ex.id}" style="color:#c62828;">🗑️</button></div>`; container.appendChild(div); }); document.querySelectorAll('.edit-questions').forEach(btn=>btn.onclick=()=>openEditQuestions(Number(btn.dataset.id))); document.querySelectorAll('.batch-import').forEach(btn=>btn.onclick=()=>openBatchImport(Number(btn.dataset.id))); document.querySelectorAll('.edit-ex').forEach(btn=>btn.onclick=()=>{ const ex=exercises.find(e=>e.id===Number(btn.dataset.id)); if(ex){ const t=prompt("Tên mới:",ex.title); if(t){ ex.title=t; saveToCloud(); renderTeacher(); } } }); document.querySelectorAll('.del-ex').forEach(btn=>btn.onclick=()=>{ if(confirm("Xóa?")){ exercises=exercises.filter(e=>e.id!==Number(btn.dataset.id)); classes.forEach(c=>c.exerciseIds=c.exerciseIds.filter(id=>id!==Number(btn.dataset.id))); saveToCloud(); renderTeacher(); } }); }
     function openEditQuestions(exId) { const ex=exercises.find(e=>e.id===exId); if(!ex) return; const modal=document.createElement('div'); modal.className='modal'; let qHtml=''; ex.questions.forEach((q,i)=>{ qHtml+=`<div style="border:1px solid #ccc;padding:8px;border-radius:16px;margin-bottom:8px;"><label>Câu ${i+1}: (các từ cách nhau dấu cách)</label><input type="text" class="editQText" data-qid="${q.id}" value="${escapeHtml(q.text)}"><input type="text" class="editQMeaning" data-qid="${q.id}" value="${escapeHtml(q.meaning||'')}" placeholder="🌏 Dịch nghĩa"><input type="text" class="editQGrammar" data-qid="${q.id}" value="${escapeHtml(q.grammar||'')}" placeholder="Gợi ý"><input type="text" class="editQExplanation" data-qid="${q.id}" value="${escapeHtml(q.explanation||'')}" placeholder="Giải thích"><button class="btn deleteQBtn" data-qid="${q.id}" style="background:#ffebee;color:#c62828;">🗑️</button></div>`; }); modal.innerHTML=`<div class="modal-content"><h3>Sửa: ${escapeHtml(ex.title)}</h3><div style="max-height:400px;overflow-y:auto;">${qHtml}</div><div class="flex-row"><button id="addNewQBtn" class="btn btn-outline">➕ Thêm</button><button id="cancelEditQBtn" class="btn btn-outline">Hủy</button><button id="saveEditQBtn" class="btn btn-primary">Lưu</button></div></div>`; document.body.appendChild(modal); document.getElementById('cancelEditQBtn').onclick=()=>modal.remove(); document.getElementById('addNewQBtn').onclick=()=>{ ex.questions.push({ id:Date.now()+Math.random(), text:'', meaning:'', grammar:'', explanation:'', words:[] }); modal.remove(); openEditQuestions(exId); }; document.getElementById('saveEditQBtn').onclick=()=>{ document.querySelectorAll('.editQText').forEach(inp=>{ const q=ex.questions.find(q=>q.id===Number(inp.dataset.qid)); if(q) q.text=inp.value.trim(); }); document.querySelectorAll('.editQMeaning').forEach(inp=>{ const q=ex.questions.find(q=>q.id===Number(inp.dataset.qid)); if(q) q.meaning=inp.value.trim(); }); document.querySelectorAll('.editQGrammar').forEach(inp=>{ const q=ex.questions.find(q=>q.id===Number(inp.dataset.qid)); if(q) q.grammar=inp.value.trim(); }); document.querySelectorAll('.editQExplanation').forEach(inp=>{ const q=ex.questions.find(q=>q.id===Number(inp.dataset.qid)); if(q) q.explanation=inp.value.trim(); }); ex.questions.forEach(q=>{ if(q.text) q.words=q.text.split(/\s+/); else q.words=[]; }); saveToCloud(); renderTeacher(); modal.remove(); showToast("Cập nhật","correct"); }; document.querySelectorAll('.deleteQBtn').forEach(btn=>{ btn.onclick=function(){ if(confirm("Xóa?")){ this.dataset.toDelete='true'; this.closest('div').style.opacity='0.4'; this.disabled=true; } }; }); }
     function openBatchImport(exId){ const ex=exercises.find(e=>e.id===exId); if(!ex) return; const modal=document.createElement('div'); modal.className='modal'; modal.innerHTML=`<div class="modal-content"><h3>📋 Nhập hàng loạt cho: ${escapeHtml(ex.title)}</h3><p style="font-size:0.9rem;">Cú pháp: câu (các từ cách nhau) | gợi ý | giải thích | dịch nghĩa</p><textarea id="batchLines" rows="12" style="width:100%; font-family:monospace;"></textarea><div class="flex-row"><button id="cancelBatch" class="btn btn-outline">Hủy</button><button id="confirmBatch" class="btn btn-primary">Thêm</button></div></div>`; document.body.appendChild(modal); document.getElementById('cancelBatch').onclick=()=>modal.remove(); document.getElementById('confirmBatch').onclick=()=>{ const lines=document.getElementById('batchLines').value.split(/\r?\n/); let added=0; for(let line of lines){ line=line.trim(); if(!line) continue; let parts=line.split('|').map(s=>s.trim()); let text=parts[0]; if(!text) continue; let grammar=parts[1]||''; let explanation=parts[2]||''; let meaning=parts[3]||''; let words=text.split(/\s+/); if(words.length>=2) { ex.questions.push({ id:Date.now()+Math.random(), text, words, grammar, explanation, meaning }); added++; } } if(added){ saveToCloud(); renderTeacher(); showToast(`Đã thêm ${added} câu`, "correct"); modal.remove(); } else alert("Không có câu hợp lệ"); }; }
-    function renderProgressTable(){ const container=document.getElementById('progressTable'); if(!classes.length){ container.innerHTML='Chưa có lớp'; return; } let html='<button id="exportExcelBtn" class="btn btn-outline" style="margin-bottom:12px;">📎 Xuất Excel</button><canvas id="statsChart" width="400" height="200"></canvas><div style="overflow-x:auto;"><table><thead><tr><th>Lớp</th><th>HS</th><th>Bài</th><th>Đúng/Tổng</th></tr></thead><tbody>'; classes.forEach(cls=>{ cls.students.forEach(stu=>{ const pStu=progress[cls.name]?.[stu.name]||{}; cls.exerciseIds.forEach(eid=>{ const ex=exercises.find(e=>e.id===eid); if(ex){ let correct=0; const pEx=pStu[eid]||{}; ex.questions.forEach(q=>{ if(pEx[q.id]?.correct) correct++; }); html+=`<tr><td>${escapeHtml(cls.name)}</td><td>${escapeHtml(stu.name)}</td><td>${escapeHtml(ex.title)}</td><td>${correct}/${ex.questions.length}</td></tr>`; } }); }); }); html+='</tbody></table></div>'; container.innerHTML=html; renderStatistics(); document.getElementById('exportExcelBtn')?.addEventListener('click',()=>{ let rows=[["Lớp","Học sinh","Bài tập","Số đúng","Tổng số","Tỉ lệ"]]; classes.forEach(cls=>{ cls.students.forEach(stu=>{ const pStu=progress[cls.name]?.[stu.name]||{}; cls.exerciseIds.forEach(eid=>{ const ex=exercises.find(e=>e.id===eid); if(ex){ let correct=0; const pEx=pStu[eid]||{}; ex.questions.forEach(q=>{ if(pEx[q.id]?.correct) correct++; }); rows.push([cls.name,stu.name,ex.title,correct,ex.questions.length,((correct/ex.questions.length)*100).toFixed(1)+"%"]); } }); }); }); const csv=rows.map(row=>row.join(",")).join("\n"); const blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}); const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="progress.csv"; link.click(); }); }
+    function renderProgressTable(){ const container=document.getElementById('progressTable'); if(!classes.length){ container.innerHTML='Chưa có lớp'; return; } let html='<button id="exportExcelBtn" class="btn btn-outline" style="margin-bottom:12px;">📎 Xuất Excel</button><canvas id="statsChart" width="400" height="200"></canvas><div style="overflow-x:auto;"><table border="1"><thead><tr><th>Lớp</th><th>HS</th><th>Bài</th><th>Đúng/Tổng</th></tr></thead><tbody>'; classes.forEach(cls=>{ cls.students.forEach(stu=>{ const pStu=progress[cls.name]?.[stu.name]||{}; cls.exerciseIds.forEach(eid=>{ const ex=exercises.find(e=>e.id===eid); if(ex){ let correct=0; const pEx=pStu[eid]||{}; ex.questions.forEach(q=>{ if(pEx[q.id]?.correct) correct++; }); html+=`<tr><td>${escapeHtml(cls.name)}</td><td>${escapeHtml(stu.name)}</td><td>${escapeHtml(ex.title)}</td><td>${correct}/${ex.questions.length}</td></tr>`; } }); }); }); html+='</tbody></table></div>'; container.innerHTML=html; renderStatistics(); document.getElementById('exportExcelBtn')?.addEventListener('click',()=>{ let rows=[["Lớp","Học sinh","Bài tập","Số đúng","Tổng số","Tỉ lệ"]]; classes.forEach(cls=>{ cls.students.forEach(stu=>{ const pStu=progress[cls.name]?.[stu.name]||{}; cls.exerciseIds.forEach(eid=>{ const ex=exercises.find(e=>e.id===eid); if(ex){ let correct=0; const pEx=pStu[eid]||{}; ex.questions.forEach(q=>{ if(pEx[q.id]?.correct) correct++; }); rows.push([cls.name,stu.name,ex.title,correct,ex.questions.length,((correct/ex.questions.length)*100).toFixed(1)+"%"]); } }); }); }); const csv=rows.map(row=>row.join(",")).join("\n"); const blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}); const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="progress.csv"; link.click(); }); }
     function renderStatistics(){ const canvas=document.getElementById('statsChart'); if(!canvas) return; const ctx=canvas.getContext('2d'); const studentStats={}; classes.forEach(cls=>{ cls.students.forEach(stu=>{ const key=`${cls.name} - ${stu.name}`; let correct=0,total=0; const pStu=progress[cls.name]?.[stu.name]||{}; cls.exerciseIds.forEach(eid=>{ const ex=exercises.find(e=>e.id===eid); if(ex){ const pEx=pStu[eid]||{}; ex.questions.forEach(q=>{ total++; if(pEx[q.id]?.correct) correct++; }); } }); studentStats[key]={correct,total}; }); }); const labels=Object.keys(studentStats); const dataCorrect=labels.map(l=>studentStats[l].correct); if(window.chartInstance) window.chartInstance.destroy(); window.chartInstance=new Chart(ctx,{ type:'bar', data:{ labels, datasets:[{ label:'Đúng', data:dataCorrect, backgroundColor:'#16a34a' }] }, options:{ responsive:true, maintainAspectRatio:true } }); }
     async function renderLoginLogs() { const c=document.getElementById('monitorLogs'); c.innerHTML='Đang tải...'; try { const snap=await db.collection('detailed_logs').orderBy('timestamp','desc').limit(100).get(); if(snap.empty){ c.innerHTML='Chưa có log.'; return; } let html=''; snap.forEach(doc=>{ const log=doc.data(); const start=log.startTime?.toDate().toLocaleString('vi-VN')||'?'; const end=log.endTime?.toDate().toLocaleString('vi-VN')||'?'; html+=`<div class="item-card"><div>👤 ${escapeHtml(log.studentName)} 📘 Ex${log.exerciseId} ❓${log.questionId}</div><div>⏰ Bắt đầu: ${start} - Kết thúc: ${end}</div><div>${log.correct?'✅ Đúng':'❌ Sai'}</div></div>`; }); c.innerHTML=html; } catch(e){ c.innerHTML='Lỗi'; } }
     async function loadAllowedEmails() { try { const snap=await db.collection('allowed_emails').get(); const container=document.getElementById('allowedEmailsList'); container.innerHTML=''; snap.forEach(doc=>{ const d=doc.data(); const div=document.createElement('div'); div.className='item-card'; div.innerHTML=`<div><strong>${doc.id}</strong><br><span style="font-size:0.8rem;">${d.role==='teacher'?'Giáo viên':`Học sinh: ${d.studentName||'?'} - Lớp: ${d.className||'Chưa phân lớp'}`}</span></div><button class="btn remove-email" data-email="${doc.id}" style="color:#c62828;">❌ Xóa</button>`; container.appendChild(div); }); document.querySelectorAll('.remove-email').forEach(btn=>btn.onclick=async()=>{ if(btn.dataset.email===currentUser.email) return alert("Không xóa chính mình"); if(confirm("Xóa?")){ await db.collection('allowed_emails').doc(btn.dataset.email).delete(); loadAllowedEmails(); } }); } catch(e){} }
