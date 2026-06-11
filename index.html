@@ -889,6 +889,83 @@
             }
         }
 
+
+        /* ===== PATCH: Top bar cố định, gọn nhẹ, bỏ Dark mode ===== */
+        #appContainer {
+            padding-top: 78px;
+        }
+
+        .top-bar {
+            position: fixed !important;
+            top: max(8px, env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(100vw - 16px), 1000px);
+            z-index: 1600;
+            margin: 0 !important;
+            border-radius: 999px;
+            padding: 8px 10px;
+            min-height: 52px;
+            flex-wrap: nowrap;
+        }
+
+        .top-bar > span:first-child {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.95rem;
+        }
+
+        .top-bar > div:last-child {
+            flex: 0 0 auto;
+            flex-wrap: nowrap !important;
+            gap: 8px;
+        }
+
+        .top-bar .btn {
+            min-height: 38px;
+            padding: 7px 12px;
+            font-size: 0.78rem;
+        }
+
+        #userEmailDisplay {
+            max-width: min(42vw, 220px);
+        }
+
+        @media (max-width: 720px) {
+            #appContainer {
+                padding-top: calc(66px + env(safe-area-inset-top));
+            }
+
+            .top-bar {
+                top: max(6px, env(safe-area-inset-top));
+                width: calc(100vw - 12px);
+                min-height: 50px;
+                padding: 7px 9px;
+            }
+
+            .top-bar > span:first-child {
+                font-size: 0.92rem;
+            }
+
+            .top-bar .btn {
+                min-height: 36px;
+                padding: 7px 10px;
+                font-size: 0.74rem;
+            }
+        }
+
+        @media (max-width: 460px) {
+            #userEmailDisplay {
+                display: none;
+            }
+
+            .top-bar > div:last-child {
+                gap: 0;
+            }
+        }
+
     </style>
 </head>
 <body class="light">
@@ -1036,20 +1113,12 @@
     }
     function speakText(text) { if (!window.speechSynthesis) return; window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = /[\u4e00-\u9fff]/.test(text) ? 'zh-CN' : 'vi-VN'; u.rate = 0.9; speechSynthesis.speak(u); }
 
-    // Dark mode - điều chỉnh màu chữ phù hợp
-    let currentDarkMode = localStorage.getItem('darkMode') === 'true';
-    function applyDarkMode() { 
-        if (currentDarkMode) { 
-            document.body.classList.add('dark'); 
-            document.body.classList.remove('light'); 
-        } else { 
-            document.body.classList.add('light'); 
-            document.body.classList.remove('dark'); 
-        } 
-        localStorage.setItem('darkMode', currentDarkMode); 
-    }
-    function toggleDarkMode() { currentDarkMode = !currentDarkMode; applyDarkMode(); }
-    applyDarkMode();
+    // Dark mode đã bỏ: luôn dùng giao diện sáng để tránh làm rối học sinh trên điện thoại
+    let currentDarkMode = false;
+    localStorage.removeItem('darkMode');
+    document.body.classList.add('light');
+    document.body.classList.remove('dark');
+    function toggleDarkMode() {}
 
     // Chế độ mobile/desktop
     let currentDevice = localStorage.getItem('device_theme') || 'desktop';
@@ -1401,7 +1470,6 @@
     document.getElementById('addExerciseBtn').onclick = () => { const t = document.getElementById('newExerciseTitle').value.trim(); if (!t) return; exercises.push({ id:Date.now(), title:t, questions:[] }); saveToCloud(); renderTeacher(); document.getElementById('newExerciseTitle').value = ''; };
     document.getElementById('inviteStudentBtn').onclick = async () => { const email = document.getElementById('inviteEmail').value.trim(); const name = document.getElementById('inviteStudentName').value.trim(); if (!email || !name) return alert("Nhập email và tên"); await db.collection('allowed_emails').doc(email).set({ role:'student', studentName:name, className:'' }); document.getElementById('inviteEmail').value = ''; document.getElementById('inviteStudentName').value = ''; loadAllowedEmails(); showToast(`Đã mời ${email}`, 'correct'); };
     document.getElementById('addAnotherTeacherBtn').onclick = async () => { const email = prompt("Email giáo viên:"); if (email) { await db.collection('allowed_emails').doc(email).set({ role:'teacher' }); loadAllowedEmails(); } };
-    const darkBtn = document.createElement('button'); darkBtn.innerText = '🌙 Dark mode'; darkBtn.className = 'btn btn-outline'; darkBtn.onclick = toggleDarkMode; document.querySelector('.top-bar div:last-child').appendChild(darkBtn);
     (async () => { try { const snap = await db.collection('allowed_emails').where('role','==','teacher').get(); if (snap.empty) await db.collection('allowed_emails').doc('doluc651@gmail.com').set({ role:'teacher' }); } catch(e) {} })();
 </script>
 </body>
